@@ -263,59 +263,72 @@ class Equipo {
         JOptionPane.showMessageDialog(null, "El equipo " + equipoElegido + " no fue encontrado.");
     }
     
-    // Metodo jugarPartida
-    public void jugarPartida(LinkedList<Equipo> listaEquipos,LinkedList<Jugador> listaJugadores ) {
-    	// Verificar que existan equipos
-    	if (listaEquipos.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "No hay equipos en la lista");
+    public void jugarPartida(LinkedList<Equipo> listaEquipos) {
+        // Verificar si hay suficientes equipos para jugar
+        if (listaEquipos.size() != 2) {
+            JOptionPane.showMessageDialog(null, "Deben haber exactamente dos equipos para jugar una partida.");
             return;
         }
-    	// Verificar que no sean menos de dos equipos
-    	if (listaEquipos.size() < 2) {
-            JOptionPane.showMessageDialog(null, "Debe haber al menos dos equipos para jugar una partida.");
-            return;
+
+        
+        Equipo equipo1 = listaEquipos.get(0);
+        Equipo equipo2 = listaEquipos.get(1);
+
+        // Iniciar contadores de dragones
+        int dragonesEquipo1 = 0;
+        int dragonesEquipo2 = 0;
+
+        
+        for (int i = 0; i < 10; i++) { // Simular hasta 5 etapas en las que se pueden obtener dragones
+            // Generar un dragon con una probabilidad del 50% // o sea asi no funciona el lol pero no se me ocurrio otra cosa dxdx // Esto en realidad simula si algun equipo va a hacerse el dragon
+            boolean hayDragon = Math.random() > 0.5;
+            if (!hayDragon) {
+                break; // Si no hay dragon, continuar a la siguiente etapa
+            }
+
+            // Determinar cual equipo obtiene el dragon
+            double probabilidadDragonEquipo1 = Math.random();
+            double probabilidadDragonEquipo2 = Math.random();
+            
+            if (probabilidadDragonEquipo1 > probabilidadDragonEquipo2) {
+                dragonesEquipo1++;
+                JOptionPane.showMessageDialog(null, "El equipo " + equipo1.getNombreEquipo() + " ha obtenido un dragon.");
+            } else {
+                dragonesEquipo2++;
+                JOptionPane.showMessageDialog(null, "El equipo " + equipo2.getNombreEquipo() + " ha obtenido un dragon.");
+            }
+
+            // Verificar si algun equipo ha obtenido el Alma del Dragon
+            if (dragonesEquipo1 >= 5 || dragonesEquipo2 >= 5) {
+                break;
+            }
         }
-    	// Verificar que hayan jugadores en la lista de los equipos
-    	if (listaJugadores.isEmpty()) {
-    		JOptionPane.showMessageDialog(null, "No hay jugadores en la lista de los equipos");
-            return;
-		}
-    	// Verificar que hayan 5 jugadores en cada equipo
-    	if (listaJugadores.size() < 10) { // Si el tamaño de la lista es menor a 10 significa que no hay 5 jugadores en cada equipo ya que no se pueden agregar mas de 5 por equipo
-    		JOptionPane.showMessageDialog(null, "deben haber 5 jugadores en cada equipo");
-            return;
-		}
-    	// Creacion variable Equipo que contiene la lista de los equipos segun parametro
-    	Equipo equipo1 = listaEquipos.get(0);
-    	Equipo equipo2 = listaEquipos.get(1);
-    	
-    	int contVictoriasEquipo1 = 0;
-    	int contVictoriasEquipo2 = 0;
-    	
-    	// Bucle que continua siempre que las victorias sean menor a 3
-    	while (contVictoriasEquipo1 < 3 && contVictoriasEquipo2 < 3) {
-    		int resultado = (int) (Math.random() * 2); // 0 o 1
-			
-    		 if (resultado == 0) {
-    			 contVictoriasEquipo1++;
-             } else {
-            	 contVictoriasEquipo2++;
-             }
-    		 
-    		 String mensajeResultado = "Resultado de la partida:\n" +
-    				 equipo1.getNombreEquipo() + ": " + contVictoriasEquipo1 + " victorias\n" +
-    				 equipo2.getNombreEquipo() + ": " + contVictoriasEquipo2 + " victorias";
-    		 
-    		 JOptionPane.showMessageDialog(null, mensajeResultado);	
-		}
-    	
-    	String mensajeGanador;
-        if (contVictoriasEquipo1 == 3) {
-            mensajeGanador = "El ganador es " + equipo1.getNombreEquipo() + " con 3 victorias.";
+
+        // Calcular la probabilidad de ganar basada en los dragones obtenidos
+        double probabilidadGanarEquipo1 = 0.5 + (dragonesEquipo1 * 0.1); // %50 de ganar mas la cantidad de dragon * 0.1(%10) es decir mientras mas dragones mas probabilidad de ganar
+        double probabilidadGanarEquipo2 = 0.5 + (dragonesEquipo2 * 0.1);
+
+        // Ajustar la probabilidad si alguno de los equipos tiene el Alma del Dragon (5 dragones)
+        if (dragonesEquipo1 >= 5) {
+            probabilidadGanarEquipo1 += 0.2; // Boost adicional por tener Alma del Dragon
+        }
+        if (dragonesEquipo2 >= 5) {
+            probabilidadGanarEquipo2 += 0.2; // Boost adicional por tener Alma del Dragon
+        }
+
+        // Determinar el ganador
+        double probabilidadTotal = probabilidadGanarEquipo1 + probabilidadGanarEquipo2;
+        double probabilidadAleatoria = Math.random() * probabilidadTotal;
+
+        String equipoGanador;
+        if (probabilidadAleatoria <= probabilidadGanarEquipo1) {
+            equipoGanador = equipo1.getNombreEquipo();
         } else {
-            mensajeGanador = "El ganador es " + equipo2.getNombreEquipo() + " con 3 victorias.";
+            equipoGanador = equipo2.getNombreEquipo();
         }
-        JOptionPane.showMessageDialog(null, mensajeGanador);
+
+        // Mostrar resultado
+        JOptionPane.showMessageDialog(null, "El equipo ganador es: " + equipoGanador);
     }
 }
     	
